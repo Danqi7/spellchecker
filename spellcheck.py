@@ -9,32 +9,32 @@ import sys
 #insertion_cost = float(sys.argv[2])
 #substitution_cost = float(sys.argv[3])
 
-infile_name = sys.argv[1]
-dictionary_name = sys.argv[2]
-typos = list()
+#infile_name = sys.argv[1]
+#dictionary_name = sys.argv[2]
+#typos = list()
 #truewords = list()
+ 
+#def parse_infile (infile_name):
 
-def parse_infile (infile_name):
+	#with open(infile_name) as infile:
+		#for raw in infile:
+			#raw_list = raw.split("\t")
+			#typos.append(raw_list[0])
+			#typos.append(raw_list[1])
 
-	with open(infile_name) as infile:
-		for raw in infile:
-			raw_list = raw.split("\t")
-			typos.append(raw_list[0])
-			typos.append(raw_list[1])
-
-def parse_dict (dictionary_name):
-	with open(dictionary_name) as dictionary:
-		for raw in dictionary:
-			raw_list = raw.split("\r\n")#raw.split("\r\n")
-			dictionary.append(raw_list[0])
-
-
+#def parse_dict (dictionary_name):
+	#with open(dictionary_name) as dictionary:
+		#for raw in dictionary:
+			#raw_list = raw.split("\r\n")#raw.split("\r\n")
+			#dictionary.append(raw_list[0])
 
 
+#
 
 
 
-def find_closest_word (string1, dictionary, deletion_cost, insertion_cost, substitution_cost):
+
+def find_closest_word (string1, dictionary):
 	min_dist = 999999999999999999999999999 #a really large initial distance to begin with
 	for s in dictionary:
 		dist = levenshtein_distance(string1, s, deletion_cost, insertion_cost, substitution_cost) # deletion,sub,insertion costs are 1
@@ -67,11 +67,11 @@ def levenshtein_distance(string1, string2, deletion_cost, insertion_cost, substi
 
 #print(find_closest_word("zog",["dog","fyz","www"]))
 
-def measure_error(typos, truewords, dictionarywords, deletion_cost, insertion_cost, substitution_cost):
+def measure_error(typos, truewords, dictionarywords):
 	numerror = 0
 	i = 0
 	for typo in typos:
-		closest_word = find_closest_word(typo,dictionarywords, deletion_cost, insertion_cost, substitution_cost)
+		closest_word = find_closest_word(typo,dictionarywords)
 		if closest_word != truewords[i]:
 			numerror = numerror + 1
 		i = i + 1
@@ -128,8 +128,8 @@ def qwerty_levenshtein_distance(string1, string2, deletion_cost, insertion_cost)
 #print(measure_error(["flee","lovv","dib"],["flea","loss","job"],["dogg","flea","wqdq","dog"]))
 
 #parse and divide wikitypo into typos truewords and
-#typos = list()
-#truewords = list()
+typos = list()
+truewords = list()
 with open("cleantypo.txt","rb") as infile:
 	for raw in infile:
 		raw_list = raw.split()
@@ -155,3 +155,21 @@ with open("clean.txt","rb") as dictfile:
 #print(measure_error(typos,truewords,dictionary))
 
 #print(time.time()-start)
+
+
+errors = [0] * 444
+combo = [0] * 444
+counter = 0
+for i in [0,1,2,4]:
+	for j in [0,1,2,4]:
+			for k in [0,1,2,4]:
+				deletion_cost = i
+				insertion_cost = j
+				substitution_cost = k
+				combo[counter] = i * 100 + j * 10 + k
+				errors[counter] = measure_error(typos,truewords,dictionary)
+				counter = counter + 1
+
+
+print(errors)
+
